@@ -8,8 +8,9 @@ logger -p user.notice -t "slugc[$$]" "language_pack_java java_compile_start"
 
 build_dir=$1
 
-# Load some convenience functions like status(), echo(), and indent()
-source $bp_dir/bin/common.sh
+cat_npm_debug_log() {
+  test -f $build_dir/npm-debug.log && cat $build_dir/npm-debug.log
+}
 
 # Output npm debug info on error
 trap cat_npm_debug_log ERR
