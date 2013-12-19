@@ -37,6 +37,10 @@ PATH=$PATH:$BUILD_DIR/vendor/node/bin
 echo -n "-----> NPM Installing Yeoman..."
 npm install -g yo
 
+# Install phantom 
+echo -n "-----> NPM Installing PhaontomJS..."
+npm install phantomjs
+
 curl --silent --location http://heroku-jvm-common.s3.amazonaws.com/jvm-buildpack-common.tar.gz | tar xz
 . bin/java
 
