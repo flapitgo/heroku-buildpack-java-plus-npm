@@ -12,13 +12,13 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 LOGGER_FLAGS=""
 
-#cat_npm_debug_log() {
-#  test -f $BUILD_DIR/npm-debug.log && cat $BUILD_DIR/npm-debug.log
-#}
-#
-## Output npm debug info on error
-#trap cat_npm_debug_log ERR
-#
+cat_npm_debug_log() {
+  test -f $BUILD_DIR/npm-debug.log && cat $BUILD_DIR/npm-debug.log
+}
+
+# Output npm debug info on error
+trap cat_npm_debug_log ERR
+
 ## Resolve node version using semver.io
 #node_version=0.10.19
 #
