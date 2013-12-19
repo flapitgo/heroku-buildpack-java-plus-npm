@@ -8,12 +8,12 @@ logger -p user.notice -t "slugc[$$]" "language_pack_java java_compile_start"
 
 build_dir=$1
 
-cat_npm_debug_log() {
-  test -f $build_dir/npm-debug.log && cat $build_dir/npm-debug.log
-}
+#cat_npm_debug_log() {
+#  test -f $build_dir/npm-debug.log && cat $build_dir/npm-debug.log
+#}
 
 # Output npm debug info on error
-trap cat_npm_debug_log ERR
+#trap cat_npm_debug_log ERR
 
 # Resolve node version using semver.io
 node_version=0.10.19
