@@ -36,6 +36,7 @@ PATH=$PATH:$BUILD_DIR/vendor/node/bin
 # Install yoeman
 echo -n "-----> NPM Installing Yeoman..."
 npm install -g yo
+bower cache clean
 
 # Install phantom 
 echo -n "-----> NPM Installing PhaontomJS..."
