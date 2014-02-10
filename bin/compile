@@ -20,7 +20,7 @@ cat_npm_debug_log() {
 trap cat_npm_debug_log ERR
 
 # Resolve node version using semver.io
-node_version="0.10.20"
+node_version="0.10.25"
 
 # Download node from Heroku's S3 mirror of nodejs.org/dist
 echo -n "-----> Downloading and installing node ${node_version} ..."
