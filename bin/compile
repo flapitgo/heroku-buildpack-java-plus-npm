@@ -34,6 +34,7 @@ chmod +x $BUILD_DIR/vendor/node/bin/*
 PATH=$PATH:$BUILD_DIR/vendor/node/bin
 
 # Clean any npm cache hanging about
+npm update -g
 npm cache clean
 
 # Install yoeman
