@@ -23,7 +23,7 @@ trap cat_npm_debug_log ERR
 node_version="0.10.31"
 
 # Download node from Heroku's S3 mirror of nodejs.org/dist
-echo -n "-----> Downloading and installing node ${node_version} ..."
+echo "-----> Downloading and installing node ${node_version} ..."
 node_url="http://s3pository.heroku.com/node/v$node_version/node-v$node_version-linux-x64.tar.gz"
 curl $node_url -s -o - | tar xzf - -C $BUILD_DIR
 
@@ -38,13 +38,51 @@ npm update -g
 npm cache clean
 
 # Install yoeman
-echo -n "-----> NPM Installing Yeoman..."
+echo "-----> NPM Installing Yeoman..."
 npm install -g yo
 bower cache clean
 
 # Install phantom 
-echo -n "-----> NPM Installing PhaontomJS..."
+echo "-----> Installing PhaontomJS..."
 npm install phantomjs
+PHANTOMJS_VERSION="1.9.7"
+PHANTOMJS_ARCHIVE_NAME=phantomjs-${PHANTOMJS_VERSION}-linux-x86_64
+PHANTOMJS_FILE_NAME=${PHANTOMJS_ARCHIVE_NAME}.tar.bz2
+BUILDPACK_PHANTOMJS_PACKAGE=https://bitbucket.org/ariya/phantomjs/downloads/${PHANTOMJS_FILE_NAME}
+
+if ! [ -e $CACHE_DIR/$PHANTOMJS_FILE_NAME ]; then
+  echo "-----> Fetching PhantomJS ${PHANTOMJS_VERSION} binaries at ${BUILDPACK_PHANTOMJS_PACKAGE}"
+  curl $BUILDPACK_PHANTOMJS_PACKAGE -L -s -o $CACHE_DIR/$PHANTOMJS_FILE_NAME
+fi
+
+echo "-----> Extracting PhantomJS ${VERSION} binaries to ${BUILD_DIR}/vendor/phantomjs"
+mkdir -p $CACHE_DIR/$PHANTOMJS_ARCHIVE_NAME
+mkdir -p $BUILD_DIR/vendor
+tar jxf $CACHE_DIR/$PHANTOMJS_FILE_NAME -C $CACHE_DIR
+mv $CACHE_DIR/$PHANTOMJS_ARCHIVE_NAME $BUILD_DIR/vendor/phantomjs
+
+echo "-----> exporting PATH and LIBRARY_PATH"
+PROFILE_PATH="$BUILD_DIR/.profile.d/phantomjs.sh"
+mkdir -p $(dirname $PROFILE_PATH)
+echo 'export PATH="$PATH:vendor/phantomjs/bin"' >> $PROFILE_PATH
+echo 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:vendor/phantomjs/lib"' >> $PROFILE_PATH
+
+#Install gifsicle
+echo "-----> Installing gifsicle"
+
+# change to the the BUILD_DIR ($1)
+cd $1
+
+curl -s -O http://jc4p.github.io/heroku-buildpack-gifsicle/bin/gifsicle-1.78.tar.gz
+
+mkdir -p vendor/gifsicle
+cd vendor/gifsicle
+
+curl -L --silent http://jc4p.github.io/heroku-buildpack-gifsicle/bin/gifsicle-1.78.tar.gz | tar xz
+
+PROFILE_PATH="$1/.profile.d/gifsicle.sh"
+mkdir -p $(dirname $PROFILE_PATH)
+echo 'export PATH="$PATH:vendor/gifsicle/bin"' >> $PROFILE_PATH
 
 curl --silent --location http://heroku-jvm-common.s3.amazonaws.com/jvm-buildpack-common.tar.gz | tar xz
 . bin/java
@@ -71,7 +109,7 @@ fi
 
 # install JDK 
 javaVersion=$(detect_java_version ${BUILD_DIR})
-echo -n "-----> Installing OpenJDK ${javaVersion}..."
+echo "-----> Installing OpenJDK ${javaVersion}..."
 install_java ${BUILD_DIR} ${javaVersion}
 jdk_overlay ${BUILD_DIR}
 echo " done"
@@ -83,7 +121,7 @@ cd $CACHE_DIR
 MAVEN_URL="http://s3.amazonaws.com/heroku-jvm-langpack-java/maven.tar.gz"
 
 if [ ! -d .maven ]; then
-  echo -n "-----> Installing Maven 3.0.3..."
+  echo "-----> Installing Maven 3.0.3..."
   curl --silent --max-time 60 --location $MAVEN_URL | tar xz
   chmod +x .maven/bin/mvn
   echo " done"
