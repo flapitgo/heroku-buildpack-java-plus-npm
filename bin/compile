@@ -55,34 +55,27 @@ if ! [ -e $CACHE_DIR/$PHANTOMJS_FILE_NAME ]; then
   curl $BUILDPACK_PHANTOMJS_PACKAGE -L -s -o $CACHE_DIR/$PHANTOMJS_FILE_NAME
 fi
 
-echo "-----> Extracting PhantomJS ${VERSION} binaries to ${BUILD_DIR}/vendor/phantomjs"
+echo "-----> Extracting PhantomJS ${PHANTOMJS_VERSION} binaries to ${BUILD_DIR}/vendor/phantomjs"
 mkdir -p $CACHE_DIR/$PHANTOMJS_ARCHIVE_NAME
 mkdir -p $BUILD_DIR/vendor
 tar jxf $CACHE_DIR/$PHANTOMJS_FILE_NAME -C $CACHE_DIR
 mv $CACHE_DIR/$PHANTOMJS_ARCHIVE_NAME $BUILD_DIR/vendor/phantomjs
-
-echo "-----> exporting PATH and LIBRARY_PATH"
-PROFILE_PATH="$BUILD_DIR/.profile.d/phantomjs.sh"
-mkdir -p $(dirname $PROFILE_PATH)
-echo 'export PATH="$PATH:vendor/phantomjs/bin"' >> $PROFILE_PATH
-echo 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:vendor/phantomjs/lib"' >> $PROFILE_PATH
+chmod +x $BUILD_DIR/vendor/phantomjs
+PATH=$PATH:$BUILD_DIR/vendor/phantomjs/bin
 
 #Install gifsicle
 echo "-----> Installing gifsicle"
+mkdir -p $BUILD_DIR/vendor/gifsicle
+curl -L --silent http://jc4p.github.io/heroku-buildpack-gifsicle/bin/gifsicle-1.78.tar.gz | tar xz -C $BUILD_DIR/vendor/gifsicle
+chmod +x $BUILD_DIR/vendor/gifsicle
+PATH=$PATH:$BUILD_DIR/vendor/gifsicle/bin
 
-# change to the the BUILD_DIR ($1)
-cd $1
-
-curl -s -O http://jc4p.github.io/heroku-buildpack-gifsicle/bin/gifsicle-1.78.tar.gz
-
-mkdir -p vendor/gifsicle
-cd vendor/gifsicle
-
-curl -L --silent http://jc4p.github.io/heroku-buildpack-gifsicle/bin/gifsicle-1.78.tar.gz | tar xz
-
-PROFILE_PATH="$1/.profile.d/gifsicle.sh"
-mkdir -p $(dirname $PROFILE_PATH)
-echo 'export PATH="$PATH:vendor/gifsicle/bin"' >> $PROFILE_PATH
+echo "-----> Installing optipng"
+OPTIPNG_DOWNLOAD_URL="https://github.com/jayzes/heroku-buildpack-optipng/releases/download/v0.7.4/optipng"
+mkdir -p $BUILD_DIR/vendor/optipng
+curl -L --silent $OPTIPNG_DOWNLOAD_URL | tar xz -C $BUILD_DIR/vendor/optipng
+chmod +x $BUILD_DIR/vendor/optipng/bin/optipng
+PATH=$PATH:$BUILD_DIR/vendor/optipng/bin
 
 curl --silent --location http://heroku-jvm-common.s3.amazonaws.com/jvm-buildpack-common.tar.gz | tar xz
 . bin/java
