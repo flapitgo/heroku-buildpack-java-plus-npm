@@ -40,6 +40,9 @@ npm cache clean
 # Install yoeman
 echo "-----> NPM Installing Yeoman..."
 npm install -g yo
+
+echo "-----> NPM Installing Bower..."
+npm install -g bower
 bower cache clean
 
 # Install phantom 
