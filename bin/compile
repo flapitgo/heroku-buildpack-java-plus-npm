@@ -45,6 +45,9 @@ echo "-----> NPM Installing Bower..."
 npm install -g bower
 bower cache clean
 
+echo "-----> NPM Installing Grunt..."
+npm install -g grunt-cli
+
 # Install phantom 
 echo "-----> Installing PhaontomJS..."
 npm install phantomjs
